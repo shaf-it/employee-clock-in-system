@@ -1,6 +1,6 @@
-# employee-clock-in-system
-Card-based employee attendance tracking system using Raspberry Pi
 # Employee Clock-In System
+Card-based employee attendance tracking system using Raspberry Pi
+
 
 ## Overview
 The Employee Clock-In System is a digital attendance tracking solution designed to replace manual, paper-based clock-in logs. It allows employees to clock in, clock out, and record lunch or off-site breaks using a card swipe system. All attendance data is stored digitally and can be viewed by an administrator for easy tracking and review.
