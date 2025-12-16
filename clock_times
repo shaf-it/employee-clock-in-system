@@ -1,0 +1,37 @@
+// This happens when a card is swiped
+$card_number = $_POST['card_number']; // Retrieved from the card scanner
+
+// Get the employee based on the card number
+$stmt = $conn->prepare("SELECT id FROM employees WHERE card_number = :card_number LIMIT 1");
+$stmt->execute(['card_number' => $card_number]);
+$employee = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($employee) {
+    $employee_id = $employee['id'];
+    $current_time = date("Y-m-d H:i:s");
+
+    // Check if the employee is already clocked in (no clock-out yet)
+    $stmt = $conn->prepare("SELECT * FROM clock_times WHERE employee_id = :employee_id AND clock_out_time IS NULL");
+    $stmt->execute(['employee_id' => $employee_id]);
+    $clock_record = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($clock_record) {
+        // Clock out the employee
+        $stmt = $conn->prepare("UPDATE clock_times SET clock_out_time = :clock_out_time WHERE id = :id");
+        $stmt->execute([
+            'clock_out_time' => $current_time,
+            'id' => $clock_record['id']
+        ]);
+        echo "Successfully clocked out.";
+    } else {
+        // Clock in the employee
+        $stmt = $conn->prepare("INSERT INTO clock_times (employee_id, clock_in_time) VALUES (:employee_id, :clock_in_time)");
+        $stmt->execute([
+            'employee_id' => $employee_id,
+            'clock_in_time' => $current_time
+        ]);
+        echo "Successfully clocked in.";
+    }
+} else {
+    echo "Card not recognized!";
+}
