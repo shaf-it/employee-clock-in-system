@@ -1,0 +1,362 @@
+<?php
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+ 
+    if (empty($_POST['card_id'])) {
+        header("Location: ".$_SERVER['PHP_SELF']."?error=Please swipe your card first");
+        exit();
+    }
+    
+
+    
+    if (isset($_POST['clockin'])) {
+        
+        $message = "Successfully clocked in.";
+        header("Location: /JOHNNY/employees2/php/employee_dashboard.php?status=clockin&message=".urlencode($message)); 
+        exit();
+    
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Clock-In System</title>
+    <style>
+       
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #141E30, #243B55);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /*  dais de Container styling */
+        .container {
+            width: 100%;
+            max-width: 550px; 
+            background-color: #1e2a38;
+            padding: 40px; 
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+      
+        h1 {
+            font-size: 32px; 
+            margin-bottom: 30px; 
+            color: #00e1ff;
+            text-shadow: 0 0 10px #00e1ff, 0 0 20px #00e1ff;
+            margin-top: 60px; 
+        }
+
+      
+        input[type="text"] {
+            font-size: 22px;
+            padding: 15px; 
+            width: 100%;
+            margin-bottom: 35px; 
+            border: 2px solid #00e1ff;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+        }
+
+        input[type="text"]::placeholder {
+            color: #a3a3a3;
+        }
+
+        /* thing to make de button responsive */
+        .buttons {
+            display: center;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+
+        
+        .btn {
+            font-size: 20px; 
+            padding: 16px; 
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+        }
+
+        
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.8), 0 0 30px rgba(0, 123, 255, 0.5);
+        }
+
+        
+        .full-screen-button {
+            margin-top: 25px; 
+            background-color: #28a745;
+            border: none;
+            padding: 16px; 
+            font-size: 18px; 
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+            width: 100%;
+            max-width: 250px; 
+        }
+
+       
+        .full-screen-button:hover {
+            background-color: #218838;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.8), 0 0 30px rgba(40, 167, 69, 0.5);
+        }
+
+        
+        .message, .error {
+            font-size: 20px; 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border-radius: 8px;
+        }
+
+        .message {
+            color: #00e1ff;
+            text-shadow: 0 0 5px #00e1ff;
+            background-color: rgba(0, 225, 255, 0.1);
+        }
+
+        .error {
+            color: #ff5252;
+            background-color: rgba(255, 82, 82, 0.1);
+            text-shadow: 0 0 5px #ff5252;
+        }
+
+        
+        .clock-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 15px 0; 
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            text-align: center;
+        }
+
+        .clock {
+            font-size: 24px; 
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+        }
+
+        .date {
+            font-size: 16px; 
+            color: #ffd700;
+            margin-top: 8px; 
+        }
+
+        
+        .center-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        
+        @media only screen and (max-width: 768px) {
+            .container {
+                padding: 30px;
+                width: 92%;
+                max-width: none;
+            }
+
+            h1 {
+                font-size: 28px;
+                margin-top: 50px;
+            }
+
+            input[type="text"] {
+                font-size: 20px;
+                padding: 12px;
+            }
+
+            .btn {
+                font-size: 18px;
+                padding: 14px;
+            }
+
+            .buttons {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        @media only screen and (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-top: 45px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="clock-container">
+        <div class="clock" id="clock"></div>
+        <div class="date" id="date"></div>
+    </div>
+
+    <h1>Swipe Your Card to Clock In/Out</h1>
+
+    
+    <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" id="clockForm">
+        <input type="text" name="card_id" placeholder="Swipe your card here" id="cardInput" autofocus>
+        <div class="buttons">
+            <button class="btn" name="clockin" type="submit">verify</button>
+            
+        </div>
+    </form>
+
+    
+    <?php if (isset($_GET['message'])): ?>
+    <div class="message">
+        <?php echo htmlspecialchars($_GET['message']); ?>
+    </div>
+    <?php endif; ?>
+
+    
+    <?php if (isset($_GET['error'])): ?>
+    <div class="error">
+        <?php echo htmlspecialchars($_GET['error']); ?>
+    </div>
+    <?php endif; ?>
+
+    <div class="center-wrapper">
+        <button class="full-screen-button" id="fullscreen-btn">Toggle Full Screen</button>
+    </div>
+</div>
+
+<script>
+    
+    document.getElementById('cardInput').focus();
+    
+    
+    document.getElementById('cardInput').addEventListener('blur', function() {
+        setTimeout(() => {
+            this.focus();
+        }, 100);
+    });
+
+    
+    function toggleFullScreen() {
+        if (!document.fullscreenElement &&
+            !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement &&
+            !document.msFullscreenElement) {
+            
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            }
+        } else {
+        
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    }
+
+    
+    document.getElementById('fullscreen-btn').addEventListener('click', function() {
+        toggleFullScreen();
+    });
+
+    
+    function updateClock() {
+        const now = new Date();
+        
+        
+        const timeOptions = { 
+            timeZone: 'America/Puerto_Rico', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit', 
+            hour12: true 
+        };
+        
+        
+        const dateOptions = { 
+            timeZone: 'America/Puerto_Rico', 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        };
+        
+        const currentTime = now.toLocaleTimeString('en-US', timeOptions);
+        const currentDate = now.toLocaleDateString('en-US', dateOptions);
+
+        document.getElementById('clock').textContent = currentTime;
+        document.getElementById('date').textContent = currentDate;
+    }
+
+   
+    setInterval(updateClock, 1000);
+    
+    
+    updateClock();
+    
+    
+    document.getElementById('clockForm').addEventListener('submit', function(e) {
+        const cardInput = document.getElementById('cardInput');
+        if (!cardInput.value.trim()) {
+            e.preventDefault();
+            alert('Please swipe your card first');
+            cardInput.focus();
+        }
+    });
+</script>
+
+</body>
+</html>
